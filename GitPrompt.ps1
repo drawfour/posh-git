@@ -95,6 +95,7 @@ $global:GitPromptSettings = New-Object PSObject -Property @{
     DescribeStyle                               = ''
 
     EnableWindowTitle                           = 'posh~git ~ '
+    EnableRepoParentInTitle                     = $false
 
     Debug                                       = $false
 
@@ -272,8 +273,9 @@ function Write-GitStatus($status) {
                 $Global:PreviousWindowTitle = $Host.UI.RawUI.WindowTitle
             }
             $repoName = Split-Path -Leaf (Split-Path $status.GitDir)
+            $repoParent = if ($s.EnableRepoParentInTitle -eq $true) { "$(Split-Path -Leaf (Split-Path (Split-Path $status.GitDir))) " } else { '' }
             $prefix = if ($s.EnableWindowTitle -is [string]) { $s.EnableWindowTitle } else { '' }
-            $Host.UI.RawUI.WindowTitle = "$script:adminHeader$prefix$repoName [$($status.Branch)]"
+            $Host.UI.RawUI.WindowTitle = "$script:adminHeader$prefix$repoParent$repoName [$($status.Branch)]"
         }
     } elseif ( $Global:PreviousWindowTitle ) {
         $Host.UI.RawUI.WindowTitle = $Global:PreviousWindowTitle
